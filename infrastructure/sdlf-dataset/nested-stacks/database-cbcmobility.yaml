@@ -1,0 +1,28 @@
+# st_cbc_test
+AWSTemplateFormatVersion: 2010-09-09
+Description: database-cbcmobility
+Parameters:
+  pTeamName:
+    AllowedPattern: "[a-z0-9]*"
+    Type: String
+Resources:
+  rGlueDBcbcmobility:
+    Type: AWS::Glue::Database
+    Properties:
+      CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Description: Database cbcmobility
+        LocationUri: !Sub s3://${pTeamName}/cbcmobility
+        Name: cbcmobility
+  rCICDPermissionsDB:
+    DependsOn:
+      - rGlueDBcbcmobility
+    Type: AWS::LakeFormation::Permissions
+    Properties:
+      DataLakePrincipal:
+        DataLakePrincipalIdentifier: !Sub arn:aws:iam::${AWS::AccountId}:role/sdlf-${pTeamName}-cicdcodebuild
+      Permissions:
+        - ALL
+      Resource:
+        DatabaseResource:
+          CatalogId: !Ref AWS::AccountId

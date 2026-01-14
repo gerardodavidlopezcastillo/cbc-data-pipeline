@@ -1,0 +1,33 @@
+# Stack principal que llama a los nested stacks
+AWSTemplateFormatVersion: 2010-09-09
+Description: Contains all the resources necessary for a single dataset cbcmobility
+Parameters:
+  pTeamName:
+    Description: Name of the team owning the pipeline (all lowercase, no symbols or spaces)
+    Type: String
+    AllowedPattern: "[a-z0-9]*"
+Resources:
+  ######## GLUE-ADMIN #########
+  rAdminStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./nested-stacks/tables-admin.yaml
+      Parameters:
+        pTeamName: !Ref pTeamName
+  rFileDBcbcmobility:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - rAdminStack
+    Properties:
+      TemplateURL: ./nested-stacks/database-cbcmobility.yaml
+      Parameters:
+        pTeamName: !Ref pTeamName
+  rtablescbcmobility1:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - rFileDBcbcmobility
+    Properties:
+      TemplateURL: ./nested-stacks/tables-cbcmobility-1.yaml
+      Parameters:
+        pTeamName: !Ref pTeamName
+        pCentralBucket: !Ref pTeamName
