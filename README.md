@@ -49,6 +49,8 @@ El entorno fue creado utilizando Python 3.10 con el siguiente comando:
 
 ```bash
 conda create -n prjct_de_cbc python=3.10 -y
+
+conda install -c conda-forge openjdk=17
 ```
 
 ![Entorno conda](docs/images/activate_project_cbc.png)
